@@ -1,0 +1,16 @@
+##Read the txt file into R as a table
+projdata <- read.table("household_power_consumption.txt", header=FALSE, sep=";",nrows=2880, skip=66637, na.strings="?", col.names=c("Date", "Time", "Global_active_power", "Global_reactive_power", "Voltage", "Global_intensity",  "Sub_metering_1",  "Sub_metering_2", "Sub_metering_3"))
+##Strip off the date and time columns and combine them into a single character vector
+##for use in strptime
+datetime <- paste(projdata$Date,projdata$Time)
+##Change the dtclass character vector into a date-time class
+dtclass <- strptime(datetime, format="%d/%m/%Y %H:%M:%S")
+##Add the date-time class vector back on to the original data
+projdataplus <- cbind(projdata, dtclass)
+##Plot the data graphically
+with(projdataplus, plot(dtclass, Sub_metering_1, type="l", ylab = "Energy Sub Metering", xlab="", col="black"))
+with(projdataplus, lines(dtclass, Sub_metering_2, type="l", ylab = "Energy Sub Metering", xlab="", col="red"))
+with(projdataplus, lines(dtclass, Sub_metering_3, type="l", ylab = "Energy Sub Metering", xlab="", col="blue"))                       
+##with(subset(projdataplus, Month == 5), points(Wind, Ozone, col = "blue"))
+##with(subset(projdataplus, Month != 5), points(Wind, Ozone, col = "red"))
+legend("topright", lty = 1, col = c("black", "red","blue"), legend = c("Sub_metering_1","Sub_metering_2","Sub_metering_3"))
